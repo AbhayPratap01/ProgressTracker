@@ -1,9 +1,33 @@
 import React from 'react';
 import { QUESTS, BOSS_BATTLES, PENALTIES, MAX_DAILY_XP } from '../data/gameData';
+import { playXPSound, playSuccessSound } from '../utils/soundEffects';
 
-export default function Quests({ state, toggleQuest, toggleBoss, togglePenalty, resetDay }) {
+export default function Quests({ state, toggleQuest, toggleBoss, togglePenalty, resetDay, showXPPopup }) {
   const dailyXP = QUESTS.filter(q => state.questsDone[q.id]).reduce((s, q) => s + q.xp, 0);
   const pct = Math.min(100, Math.round((dailyXP / MAX_DAILY_XP) * 100));
+
+  const handleToggleQuest = (q) => {
+    const isCurrentlyDone = !!state.questsDone[q.id];
+    if (!isCurrentlyDone) {
+      // Quest being completed - show animation and sound
+      if (showXPPopup) {
+        showXPPopup(q.xp, window.innerWidth / 2, window.innerHeight / 2);
+      }
+      playXPSound();
+    }
+    toggleQuest(q);
+  };
+
+  const handleToggleBoss = (b) => {
+    const isCurrentlyDone = !!state.bossesDone[b.id];
+    if (!isCurrentlyDone) {
+      if (showXPPopup) {
+        showXPPopup(b.xp, window.innerWidth / 2, window.innerHeight / 2);
+      }
+      playSuccessSound();
+    }
+    toggleBoss(b);
+  };
 
   return (
     <div className="fade-in">
@@ -54,7 +78,7 @@ export default function Quests({ state, toggleQuest, toggleBoss, togglePenalty, 
       {QUESTS.map(q => {
         const done = !!state.questsDone[q.id];
         return (
-          <div key={q.id} className={`quest-item${done ? ' done' : ''}`} onClick={() => toggleQuest(q)}>
+          <div key={q.id} className={`quest-item${done ? ' done' : ''}`} onClick={() => handleToggleQuest(q)}>
             <div className="quest-check">✓</div>
             <div className="quest-icon">{q.icon}</div>
             <div className="quest-name">{q.name}</div>
@@ -71,7 +95,7 @@ export default function Quests({ state, toggleQuest, toggleBoss, togglePenalty, 
       {BOSS_BATTLES.map(b => {
         const done = !!state.bossesDone[b.id];
         return (
-          <div key={b.id} className={`boss-card${done ? ' done' : ''}`} onClick={() => toggleBoss(b)}>
+          <div key={b.id} className={`boss-card${done ? ' done' : ''}`} onClick={() => handleToggleBoss(b)}>
             <div className="boss-icon-wrap">{b.icon}</div>
             <div style={{ flex: 1 }}>
               <div className="boss-name">{b.name}</div>

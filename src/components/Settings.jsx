@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { enableSound, isSoundEnabled, playXPSound, playSuccessSound } from '../utils/soundEffects';
 
 export default function Settings({ state, resetAll, user, logout }) {
   const [confirmReset, setConfirmReset] = useState(false);
+  const [soundOn, setSoundOn] = useState(isSoundEnabled());
 
   function exportData() {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
@@ -36,6 +38,43 @@ export default function Settings({ state, resetAll, user, logout }) {
           <div className="page-title">SETTINGS</div>
           <div className="page-sub">{`// manage your data and preferences`}</div>
         </div>
+      </div>
+
+      <div className="card" style={{ marginBottom: 16 }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.06em', marginBottom: 12 }}>
+          SOUND
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+          <button 
+            className={`btn ${soundOn ? 'btn-green' : ''}`}
+            onClick={() => {
+              const newState = !soundOn;
+              setSoundOn(newState);
+              enableSound(newState);
+            }}
+            style={{ justifyContent: 'flex-start', flex: 1 }}
+          >
+            {soundOn ? '🔊 Sound ON' : '🔇 Sound OFF'}
+          </button>
+        </div>
+        {soundOn && (
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button 
+              className="btn btn-blue"
+              onClick={() => playXPSound()}
+              style={{ flex: 1, justifyContent: 'center' }}
+            >
+              Test XP Sound
+            </button>
+            <button 
+              className="btn btn-blue"
+              onClick={() => playSuccessSound()}
+              style={{ flex: 1, justifyContent: 'center' }}
+            >
+              Test Success Sound
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="card" style={{ marginBottom: 16 }}>

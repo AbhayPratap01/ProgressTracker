@@ -2,15 +2,18 @@ import React, { useState } from 'react';
 import './App.css';
 import { useAuth } from './hooks/useAuth';
 import { useGameState } from './hooks/useGameState';
+import { useXPPopup } from './hooks/useXPPopup';
 import { getLevel, getLevelProgress, getNextLevel, QUESTS } from './data/gameData';
 import Dashboard from './components/Dashboard';
 import Quests from './components/Quests';
 import Levels from './components/Levels';
 import SkillTree from './components/SkillTree';
 import Rewards from './components/Rewards';
+import Achievements from './components/Achievements';
 import Settings from './components/Settings';
 import Auth from './components/Auth';
 import ProfileMenu from './components/ProfileMenu';
+import XPPopup from './components/XPPopup';
 
 const NAV = [
   { id: 'dashboard', label: 'Dashboard', icon: '⚡' },
@@ -18,12 +21,14 @@ const NAV = [
   { id: 'levels', label: 'Levels', icon: '🏆' },
   { id: 'skills', label: 'Skill Tree', icon: '🌳' },
   { id: 'rewards', label: 'Rewards', icon: '🎁' },
+  { id: 'achievements', label: 'Achievements', icon: '🏅' },
   { id: 'settings', label: 'Settings', icon: '⚙️' },
 ];
 
 export default function App() {
   const [page, setPage] = useState('dashboard');
   const [guestMode, setGuestMode] = useState(false);
+  const { popups, showXPPopup } = useXPPopup();
   const {
     user,
     authLoading,
@@ -150,14 +155,21 @@ export default function App() {
               toggleBoss={toggleBoss}
               togglePenalty={togglePenalty}
               resetDay={resetDay}
+              showXPPopup={showXPPopup}
             />
           )}
           {page === 'levels' && <Levels state={state} />}
           {page === 'skills' && <SkillTree state={state} cycleSkill={cycleSkill} />}
           {page === 'rewards' && <Rewards state={state} />}
+          {page === 'achievements' && <Achievements state={state} />}
           {page === 'settings' && <Settings state={state} resetAll={resetAll} user={user} logout={logout} />}
         </div>
       </main>
+
+      {/* XP Popups */}
+      {popups.map(popup => (
+        <XPPopup key={popup.id} {...popup} />
+      ))}
     </div>
   );
 }

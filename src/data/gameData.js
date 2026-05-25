@@ -85,6 +85,21 @@ export const REWARDS = [
   { key: 'project_done', name: 'Social Media Showcase', cond: 'Complete a Project', icon: '🚀', threshold: 1, type: 'project' },
 ];
 
+export const ACHIEVEMENTS = [
+  { id: 'first_steps', name: '🎮 First Steps', desc: 'Complete your first quest', icon: '🎮', condition: (state) => Object.keys(state.questsDone).length >= 1 },
+  { id: 'warrior_spirit', name: '⚔️ Warrior Spirit', desc: 'Reach 7-day streak', icon: '⚔️', condition: (state) => state.streak >= 7 },
+  { id: 'unstoppable', name: '🔥 Unstoppable', desc: 'Reach 30-day streak', icon: '🔥', condition: (state) => state.streak >= 30 },
+  { id: 'xp_collector_100', name: '💰 Penny Wise', desc: 'Reach 100 total XP', icon: '💰', condition: (state) => state.totalXp >= 100 },
+  { id: 'xp_collector_1000', name: '💎 Treasure Hunter', desc: 'Reach 1000 total XP', icon: '💎', condition: (state) => state.totalXp >= 1000 },
+  { id: 'dsa_master', name: '🧠 DSA Master', desc: 'Solve 50 DSA problems', icon: '🧠', condition: (state) => (state.dsaCount || 0) >= 50 },
+  { id: 'perfect_day', name: '⭐ Perfect Day', desc: 'Complete all daily quests', icon: '⭐', condition: (state) => Object.keys(state.questsDone).length === QUESTS.length },
+  { id: 'builder', name: '🏗️ Builder', desc: 'Complete first project feature', icon: '🏗️', condition: (state) => state.bossesDone.boss_feature },
+  { id: 'interview_ready', name: '💼 Interview Ready', desc: 'Reach Interview Ready level', icon: '💼', condition: (state) => getLevel(state.totalXp).level >= 6 },
+  { id: 'legend', name: '👑 Legend', desc: 'Reach Microsoft Challenger level', icon: '👑', condition: (state) => getLevel(state.totalXp).level >= 8 },
+  { id: 'active_legend', name: '🌟 Active Legend', desc: 'Stay active for 100+ days', icon: '🌟', condition: (state) => state.totalDaysActive >= 100 },
+  { id: 'networking_pro', name: '🌐 Networking Pro', desc: 'Complete 20 networking tasks', icon: '🌐', condition: (state) => state.linkedinCount >= 20 },
+];
+
 export const MAX_DAILY_XP = 185;
 
 export function getLevel(xp) {
