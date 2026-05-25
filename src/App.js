@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import { useAuth } from './hooks/useAuth';
 import { useGameState } from './hooks/useGameState';
 import { getLevel, getLevelProgress, getNextLevel, QUESTS } from './data/gameData';
 import Dashboard from './components/Dashboard';
@@ -8,6 +9,8 @@ import Levels from './components/Levels';
 import SkillTree from './components/SkillTree';
 import Rewards from './components/Rewards';
 import Settings from './components/Settings';
+import Auth from './components/Auth';
+import ProfileMenu from './components/ProfileMenu';
 
 const NAV = [
   { id: 'dashboard', label: 'Dashboard', icon: '⚡' },
@@ -20,8 +23,20 @@ const NAV = [
 
 export default function App() {
   const [page, setPage] = useState('dashboard');
+  const [guestMode, setGuestMode] = useState(false);
+  const {
+    user,
+    authLoading,
+    authError,
+    login,
+    loginWithGoogle,
+    register,
+    logout,
+  } = useAuth();
+
   const {
     state,
+    loaded,
     getTodayXP,
     toggleQuest,
     toggleBoss,
@@ -29,7 +44,32 @@ export default function App() {
     cycleSkill,
     resetDay,
     resetAll,
-  } = useGameState();
+    remoteError,
+    retryRemoteSync,
+    lastLoadSource,
+  } = useGameState(user && !guestMode ? user : null);
+
+  if (authLoading || !loaded) {
+    return (
+      <div className="loading-screen">
+        <div className="loading-box">Loading your progress...</div>
+      </div>
+    );
+  }
+
+  if (!user && !guestMode) {
+    return (
+      <div className="auth-shell">
+        <Auth
+          login={login}
+          register={register}
+          loginWithGoogle={loginWithGoogle}
+          authError={authError}
+          onGuest={() => setGuestMode(true)}
+        />
+      </div>
+    );
+  }
 
   const xp = state.totalXp;
   const level = getLevel(xp);
@@ -43,7 +83,6 @@ export default function App() {
       <aside className="sidebar">
         <div className="sidebar-brand">
           <div className="brand-logo">SWE QUEST</div>
-          <div className="brand-sub">// Microsoft 2026</div>
         </div>
 
         <div className="sidebar-xp">
@@ -87,20 +126,37 @@ export default function App() {
 
       {/* Main */}
       <main className="main-content">
-        {page === 'dashboard' && <Dashboard state={state} getTodayXP={getTodayXP} />}
-        {page === 'quests' && (
-          <Quests
-            state={state}
-            toggleQuest={toggleQuest}
-            toggleBoss={toggleBoss}
-            togglePenalty={togglePenalty}
-            resetDay={resetDay}
-          />
-        )}
-        {page === 'levels' && <Levels state={state} />}
-        {page === 'skills' && <SkillTree state={state} cycleSkill={cycleSkill} />}
-        {page === 'rewards' && <Rewards state={state} />}
-        {page === 'settings' && <Settings state={state} resetAll={resetAll} />}
+        <div className="main-header">
+          {remoteError && (
+            <div className="sync-warning">
+              <div>Remote sync unavailable. Progress will continue locally.</div>
+              <div className="sync-error">{remoteError}</div>
+              <button className="sync-retry-btn" onClick={() => retryRemoteSync()}>Retry sync</button>
+            </div>
+          )}
+          {user && (
+            <div className="user-debug">loaded: {String(lastLoadSource)}</div>
+          )}
+          {user && <ProfileMenu user={user} logout={logout} />}
+          {guestMode && <div className="guest-badge">Guest Mode</div>}
+        </div>
+
+        <div className="main-pages">
+          {page === 'dashboard' && <Dashboard state={state} getTodayXP={getTodayXP} />}
+          {page === 'quests' && (
+            <Quests
+              state={state}
+              toggleQuest={toggleQuest}
+              toggleBoss={toggleBoss}
+              togglePenalty={togglePenalty}
+              resetDay={resetDay}
+            />
+          )}
+          {page === 'levels' && <Levels state={state} />}
+          {page === 'skills' && <SkillTree state={state} cycleSkill={cycleSkill} />}
+          {page === 'rewards' && <Rewards state={state} />}
+          {page === 'settings' && <Settings state={state} resetAll={resetAll} user={user} logout={logout} />}
+        </div>
       </main>
     </div>
   );

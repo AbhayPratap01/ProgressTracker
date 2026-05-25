@@ -45,7 +45,6 @@ export default function Dashboard({ state, getTodayXP }) {
       <div className="page-header">
         <div>
           <div className="page-title">COMMAND CENTER</div>
-          <div className="page-sub">// Microsoft SWE 2026 — build your character</div>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)' }}>

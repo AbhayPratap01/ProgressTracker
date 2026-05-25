@@ -23,7 +23,7 @@ export default function SkillTree({ state, cycleSkill }) {
       <div className="page-header">
         <div>
           <div className="page-title">SKILL TREE</div>
-          <div className="page-sub">// click topics to cycle: locked → unlocked → mastered</div>
+          <div className="page-sub">Click topics to cycle: locked → unlocked → mastered</div>
         </div>
       </div>
 

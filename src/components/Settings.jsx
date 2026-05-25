@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Settings({ state, resetAll }) {
+export default function Settings({ state, resetAll, user, logout }) {
   const [confirmReset, setConfirmReset] = useState(false);
 
   function exportData() {
@@ -43,6 +43,10 @@ export default function Settings({ state, resetAll }) {
           DATA MANAGEMENT
         </div>
 
+        <div style={{ marginBottom: 16, fontSize: 12, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          {user ? `Signed in as ${user.email} — remote save active.` : 'Guest mode — data is saved locally only.'}
+        </div>
+
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <button className="btn btn-green" onClick={exportData} style={{ justifyContent: 'flex-start' }}>
             📤 Export Backup (JSON)
@@ -53,6 +57,17 @@ export default function Settings({ state, resetAll }) {
           </label>
         </div>
       </div>
+
+      {user && (
+        <div className="card" style={{ marginBottom: 16 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.06em', marginBottom: 12 }}>
+            ACCOUNT
+          </div>
+          <button className="btn btn-danger" onClick={logout} style={{ justifyContent: 'flex-start' }}>
+            Sign out of Firebase
+          </button>
+        </div>
+      )}
 
       <div className="card" style={{ marginBottom: 16 }}>
         <div style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.06em', marginBottom: 16 }}>
