@@ -170,7 +170,8 @@ export default function Dashboard({ state, getTodayXP }) {
         color: 'var(--text-muted)',
         letterSpacing: '0.04em',
       }}>
-        <span style={{ color: 'var(--green)' }}>// RULE 01:</span> Consistency beats motivation. Even a low-XP day is better than a zero-XP day. The goal is not perfection. The goal is <span style={{ color: 'var(--text-primary)' }}>progression.</span>
+      }}>
+        <span style={{ color: 'var(--green)' }}>{`// RULE 01:`}</span>{` Consistency beats motivation. Even a low-XP day is better than a zero-XP day. The goal is not perfection. The goal is `}<span style={{ color: 'var(--text-primary)' }}>progression.</span>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { REWARDS, LEVELS, getLevel } from '../data/gameData';
+import { REWARDS, getLevel } from '../data/gameData';
 
 export default function Rewards({ state }) {
   const streak = state.streak;
@@ -22,7 +22,7 @@ export default function Rewards({ state }) {
       <div className="page-header">
         <div>
           <div className="page-title">REWARDS</div>
-          <div className="page-sub">// earn streaks, unlock real-world prizes</div>
+          <div className="page-sub">{`// earn streaks, unlock real-world prizes`}</div>
         </div>
       </div>
 

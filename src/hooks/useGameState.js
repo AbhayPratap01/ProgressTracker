@@ -271,7 +271,7 @@ export function useGameState(user) {
       if (dailyInterval) clearInterval(dailyInterval);
       document.removeEventListener('visibilitychange', onVisible);
     };
-  }, [loaded, state.lastDayReset]);
+  }, [loaded, state.lastDayReset, resetDay]);
 
   // Server-time based reset: if Firestore is reachable, schedule resets at server midnight (UTC-based).
   useEffect(() => {

@@ -11,7 +11,7 @@ export default function Levels({ state }) {
       <div className="page-header">
         <div>
           <div className="page-title">PROGRESSION</div>
-          <div className="page-sub">// your journey from beginner to Microsoft Challenger</div>
+          <div className="page-sub">{`// your journey from beginner to Microsoft Challenger`}</div>
         </div>
       </div>
 

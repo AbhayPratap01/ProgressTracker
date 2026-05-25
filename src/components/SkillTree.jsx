@@ -162,7 +162,7 @@ export default function SkillTree({ state, cycleSkill }) {
 
       {/* Roadmap note */}
       <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 8, background: 'var(--bg-card)', border: '1px solid var(--border)', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)' }}>
-        <span style={{ color: 'var(--purple)' }}>// FUTURE:</span> Version 2 — convert this into a React + Firebase web app with auth, cloud sync, and AI-powered study planner. <span style={{ color: 'var(--text-secondary)' }}>This can become your strongest resume project.</span>
+        <span style={{ color: 'var(--purple)' }}>{`// FUTURE:`}</span>{` Version 2 — convert this into a React + Firebase web app with auth, cloud sync, and AI-powered study planner. `}<span style={{ color: 'var(--text-secondary)' }}>This can become your strongest resume project.</span>
       </div>
     </div>
   );

@@ -2,10 +2,6 @@ import React from 'react';
 import { QUESTS, BOSS_BATTLES, PENALTIES, MAX_DAILY_XP } from '../data/gameData';
 
 export default function Quests({ state, toggleQuest, toggleBoss, togglePenalty, resetDay }) {
-  const todayXP = QUESTS.filter(q => state.questsDone[q.id]).reduce((s, q) => s + q.xp, 0)
-    + BOSS_BATTLES.filter(b => state.bossesDone[b.id]).reduce((s, b) => s + b.xp, 0)
-    + PENALTIES.filter(p => state.penalties[p.id]).reduce((s, p) => s + p.xp, 0);
-
   const dailyXP = QUESTS.filter(q => state.questsDone[q.id]).reduce((s, q) => s + q.xp, 0);
   const pct = Math.min(100, Math.round((dailyXP / MAX_DAILY_XP) * 100));
 
@@ -14,7 +10,7 @@ export default function Quests({ state, toggleQuest, toggleBoss, togglePenalty, 
       <div className="page-header">
         <div>
           <div className="page-title">DAILY QUESTS</div>
-          <div className="page-sub">// complete missions to earn XP — reset at end of day</div>
+          <div className="page-sub">{`// complete missions to earn XP — reset at end of day`}</div>
         </div>
         <button className="btn btn-green" onClick={resetDay}>
           🌅 End Day & Bank XP

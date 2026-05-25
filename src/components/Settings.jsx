@@ -34,7 +34,7 @@ export default function Settings({ state, resetAll, user, logout }) {
       <div className="page-header">
         <div>
           <div className="page-title">SETTINGS</div>
-          <div className="page-sub">// manage your data and preferences</div>
+          <div className="page-sub">{`// manage your data and preferences`}</div>
         </div>
       </div>
 
@@ -113,7 +113,7 @@ export default function Settings({ state, resetAll, user, logout }) {
       </div>
 
       <div style={{ marginTop: 24, padding: '12px 16px', borderRadius: 8, background: 'var(--bg-card)', border: '1px solid var(--border)', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)' }}>
-        <div style={{ color: 'var(--green)', marginBottom: 4 }}>// STORAGE INFO</div>
+        <div style={{ color: 'var(--green)', marginBottom: 4 }}>{`// STORAGE INFO`}</div>
         Data is saved locally in your browser using <span style={{ color: 'var(--text-secondary)' }}>localStorage</span>. Export backups regularly. In Version 2, data syncs to Firebase across all devices.
       </div>
     </div>
