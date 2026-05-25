@@ -1,4 +1,4 @@
-// Sound effects using Web Audio API with better browser compatibility
+// Sound effects using Web Audio API with a softer, more aesthetic profile
 let audioContext = null;
 let soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
 
@@ -7,16 +7,18 @@ function getAudioContext() {
     try {
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
     } catch (e) {
-      console.log('Audio context not supported');
+      console.error('Audio context not supported:', e);
       return null;
     }
   }
-  
+
   // Resume if suspended (browser autoplay policy)
   if (audioContext && audioContext.state === 'suspended') {
-    audioContext.resume().catch(e => console.log('Could not resume audio context'));
+    audioContext
+      .resume()
+      .catch((e) => console.error('Could not resume audio context:', e));
   }
-  
+
   return audioContext;
 }
 
@@ -29,122 +31,147 @@ export function isSoundEnabled() {
   return soundEnabled;
 }
 
+function playTone({
+  ctx,
+  type = 'sine',
+  frequency,
+  startAt,
+  duration,
+  peak = 0.14,
+}) {
+  const now = startAt;
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  // osc -> gain -> destination
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.type = type;
+  osc.frequency.setValueAtTime(frequency, now);
+
+  // Gentle envelope (avoid loud pops)
+  // Exponential ramps need positive values.
+  const floor = 0.0001;
+  gain.gain.setValueAtTime(floor, now);
+  gain.gain.exponentialRampToValueAtTime(peak, now + 0.01); // fast attack
+  gain.gain.exponentialRampToValueAtTime(floor, now + duration); // decay
+
+  osc.start(now);
+  osc.stop(now + duration + 0.02);
+}
+
+function playSequence({
+  ctx,
+  type,
+  freqs,
+  startAt,
+  step = 0.06,
+  duration = 0.08,
+  peak = 0.14,
+}) {
+  freqs.forEach((f, i) => {
+    playTone({
+      ctx,
+      type,
+      frequency: f,
+      startAt: startAt + i * step,
+      duration,
+      peak,
+    });
+  });
+}
+
+// Short soft “XP gained” tick
 export function playXPSound() {
   if (!soundEnabled) return;
-  
+
   try {
     const ctx = getAudioContext();
     if (!ctx) return;
-    
+
     const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    
-    // Sweet ascending tone
-    osc.frequency.setValueAtTime(400, now);
-    osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
-    
-    gain.gain.setValueAtTime(0.4, now);
-    gain.gain.exponentialRampToValueAtTime(0, now + 0.15);
-    
-    osc.type = 'sine';
-    osc.start(now);
-    osc.stop(now + 0.15);
+
+    // A little arpeggio instead of harsh square beep
+    playSequence({
+      ctx,
+      type: 'triangle',
+      freqs: [523.25, 659.25, 783.99], // C E G
+      startAt: now + 0.01,
+      step: 0.05,
+      duration: 0.07,
+      peak: 0.11,
+    });
   } catch (e) {
-    console.log('Sound playback error:', e);
+    console.error('Sound playback error:', e);
   }
 }
 
+// Softer “success/ding” with two/three notes
 export function playSuccessSound() {
   if (!soundEnabled) return;
-  
+
   try {
     const ctx = getAudioContext();
     if (!ctx) return;
-    
+
     const now = ctx.currentTime;
-    const osc1 = ctx.createOscillator();
-    const osc2 = ctx.createOscillator();
-    const gain = ctx.createGain();
-    
-    osc1.connect(gain);
-    osc2.connect(gain);
-    gain.connect(ctx.destination);
-    
-    // Two-tone success sound
-    osc1.frequency.setValueAtTime(600, now);
-    osc2.frequency.setValueAtTime(800, now);
-    
-    gain.gain.setValueAtTime(0.25, now);
-    gain.gain.exponentialRampToValueAtTime(0, now + 0.3);
-    
-    osc1.type = 'sine';
-    osc2.type = 'sine';
-    
-    osc1.start(now);
-    osc2.start(now);
-    osc1.stop(now + 0.3);
-    osc2.stop(now + 0.3);
+
+    playSequence({
+      ctx,
+      type: 'sine',
+      freqs: [659.25, 880.0, 1046.5], // E A C-ish
+      startAt: now + 0.01,
+      step: 0.055,
+      duration: 0.10,
+      peak: 0.12,
+    });
   } catch (e) {
-    console.log('Sound playback error:', e);
+    console.error('Success sound error:', e);
   }
 }
 
 export function playClickSound() {
   if (!soundEnabled) return;
-  
+
   try {
     const ctx = getAudioContext();
     if (!ctx) return;
-    
+
     const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    
-    osc.frequency.setValueAtTime(300, now);
-    gain.gain.setValueAtTime(0.2, now);
-    gain.gain.exponentialRampToValueAtTime(0, now + 0.05);
-    
-    osc.type = 'triangle';
-    osc.start(now);
-    osc.stop(now + 0.05);
+    playTone({
+      ctx,
+      type: 'sine',
+      frequency: 392.0, // G4
+      startAt: now + 0.005,
+      duration: 0.05,
+      peak: 0.08,
+    });
   } catch (e) {
-    console.log('Sound playback error:', e);
+    console.error('Sound playback error:', e);
   }
 }
 
 export function playLevelUpSound() {
   if (!soundEnabled) return;
-  
+
   try {
     const ctx = getAudioContext();
     if (!ctx) return;
-    
+
     const now = ctx.currentTime;
-    const frequencies = [523.25, 659.25, 783.99]; // C, E, G chord
-    
-    frequencies.forEach((freq, idx) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      
-      osc.frequency.setValueAtTime(freq, now);
-      gain.gain.setValueAtTime(0.2, now);
-      gain.gain.exponentialRampToValueAtTime(0, now + 0.5);
-      
-      osc.type = 'sine';
-      osc.start(now);
-      osc.stop(now + 0.5);
+    playSequence({
+      ctx,
+      type: 'sine',
+      freqs: [523.25, 659.25, 783.99, 987.77], // C E G B-ish
+      startAt: now + 0.01,
+      step: 0.07,
+      duration: 0.12,
+      peak: 0.10,
     });
   } catch (e) {
-    console.log('Sound playback error:', e);
+    console.error('Sound playback error:', e);
   }
 }
+
